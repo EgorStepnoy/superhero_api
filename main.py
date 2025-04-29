@@ -26,7 +26,7 @@ def get_request():
 
 
 def your_superhero(gender: str, work: bool) -> dict | None:
-    if gender.lower() not in ('male', 'female') or not isinstance(work, bool):
+    if not isinstance(gender, str) or gender.lower() not in ('male', 'female') or not isinstance(work, bool):
         raise TypeError("Ошибка входных данных")
     heroes_list = get_request()
     max_height = -1
@@ -37,7 +37,7 @@ def your_superhero(gender: str, work: bool) -> dict | None:
         if work_status(occupation) == work and gender.lower() == hero['appearance']['gender'].lower() and height_calculator(height, measur) > max_height:
             max_height = height_calculator(height, measur)
             highest_hero = hero
-    if max_height == 0:
+    if max_height == -1:
         return None
     else:
         return highest_hero

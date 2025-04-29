@@ -55,9 +55,49 @@ def test_your_superhero(gender, work, res):
         ["gender", "work"],
         [
             ('Male', 'True'),
-            ('Boy', True)
+            ('Boy', True),
+            ("female", 1),
+            (111, False)
         ]
 )
 def test_your_superhero_invalid_data(gender, work):
    with pytest.raises(TypeError, match="Ошибка входных данных"):
       main.your_superhero(gender, work)
+
+
+def test_empty_response(monkeypatch):
+    def mock_get(*args, **kwargs):
+        class MockResponse:
+            @staticmethod
+            def json():
+                return []
+        return MockResponse()
+
+    monkeypatch.setattr("requests.get", mock_get)
+    assert main.your_superhero("male", True) is None
+
+
+def test_no_match_heroes(monkeypatch):
+    mock_data = [
+        {
+            "appearance": {"gender": "Male", "height": ["6'8", "203 cm"]},
+            "work": {"occupation": "-"} 
+        },
+        {
+            "appearance": {"gender": "Female", "height": ["6'8", "203 cm"]},
+            "work": {"occupation": "Hero"}
+        }
+    ]
+
+    def mock_get(*args, **kwargs):
+        class MockResponse:
+            @staticmethod
+            def json():
+                return mock_data
+        return MockResponse()
+
+    monkeypatch.setattr("requests.get", mock_get)
+    assert main.your_superhero("male", True) is None
+
+
+
